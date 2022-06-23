@@ -1,0 +1,68 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r}
+library(pander)
+dc <- read.csv(file.choose())
+ADJ2001 <- as.matrix(subset(x = dc, year == 2001, header = FALSE))%*%t(as.matrix(subset(x = dc, year == 2001, header = FALSE))) 
+zzz <- igraph::graph.adjacency(ADJ2001)
+library(sand)
+library(igraph)
+devtools::install_github("briatte/ggnet")
+library(ggnet)
+
+library(network)
+library(sna)
+library(ggplot2)
+g.plot <- ggnet(ADJ2001, mode = 'kamadakawai', size = 4)
+g.plot
+ADJ2001 <- as.matrix(subset(x = dc, year == 2001, header = FALSE)$CP) %*% t(as.matrix(subset(x = dc, year == 2001, header = FALSE)$CP)) 
+ADJ2002 <- as.matrix(subset(x = dc, year == 2002, header = FALSE)$CP) %*% t(as.matrix(subset(x = dc, year == 2002, header = FALSE)$CP)) 
+ADJ2003 <- as.matrix(subset(x = dc, year == 2003, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2003, header = FALSE)$CP)) 
+ADJ2004 <- as.matrix(subset(x = dc, year == 2004, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2004, header = FALSE)$CP)) 
+ADJ2005 <- as.matrix(subset(x = dc, year == 2005, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2005, header = FALSE)$CP)) 
+ADJ2006 <- as.matrix(subset(x = dc, year == 2006, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2006, header = FALSE)$CP)) 
+ADJ2007 <- as.matrix(subset(x = dc, year == 2007, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2007, header = FALSE)$CP)) 
+ADJ2008 <- as.matrix(subset(x = dc, year == 2008, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2008, header = FALSE)$CP)) 
+ADJ2009 <- as.matrix(subset(x = dc, year == 2009, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2009, header = FALSE)$CP)) 
+ADJ2010 <- as.matrix(subset(x = dc, year == 2010, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2010, header = FALSE)$CP)) 
+ADJ2011 <- as.matrix(subset(x = dc, year == 2011, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2011, header = FALSE)$CP)) 
+ADJ2012 <- as.matrix(subset(x = dc, year == 2012, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2012, header = FALSE)$CP)) 
+ADJ2013 <- as.matrix(subset(x = dc, year == 2013, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2013, header = FALSE)$CP)) 
+ADJ2014 <- as.matrix(subset(x = dc, year == 2014, header = FALSE)$CP)%*%t(as.matrix(subset(x = dc, year == 2014, header = FALSE)$CP)) 
+library("sna")
+library("network")
+library(RSiena)
+WarData <- array( c( ADJ2001, ADJ2002, ADJ2003 ),
+           dim = c( 109, 109, 3 ) )
+# and next give this the role of the dependent variable:
+Wars <- sienaDependent(WarData)
+Wars
+acc <- varCovar(cbind(as.matrix(dc[dc$year == 2001, ]$accountability),as.matrix(dc[dc$year == 2002, ]$accountability) , as.matrix(dc[dc$year == 2003, ]$accountability)))
+veto <- varCovar(cbind(as.matrix(dc[dc$year == 2001, ]$veto),as.matrix(dc[dc$year == 2002, ]$veto) , as.matrix(dc[dc$year == 2003, ]$veto)))
+alliance <- varCovar(cbind(as.matrix(dc[dc$year == 2001, ]$alliance),as.matrix(dc[dc$year == 2002, ]$alliance) , as.matrix(dc[dc$year == 2003, ]$alliance)))
+gini_disp <- varCovar(cbind(as.matrix(dc[dc$year == 2001, ]$gini_disp),as.matrix(dc[dc$year == 2002, ]$gini_disp) , as.matrix(dc[dc$year == 2003, ]$gini_disp)))
+ed <- varCovar(cbind(as.matrix(dc[dc$year == 2001, ]$ed),as.matrix(dc[dc$year == 2002, ]$ed) , as.matrix(dc[dc$year == 2003, ]$ed)))
+
+
+?sienaDataCreate
+
+mydata <- sienaDataCreate(Wars, acc, veto, alliance, gini_disp, ed )
+print01Report( mydata)
+myeff <- getEffects( mydata )
+myeff <- includeEffects( myeff, simX, egoX, altX, interaction1 = "acc" )
+myeff <- includeEffects( myeff, simX, egoX, altX, interaction1 = "veto" )
+myeff <- includeEffects( myeff, simX, egoX, altX, interaction1 = "alliance" )
+myeff <- includeEffects( myeff, simX, egoX, altX, interaction1 = "gini_disp" )
+myeff <- includeEffects( myeff, simX, egoX, altX, interaction1 = "ed" )
+
+
+myalgorithm <- sienaAlgorithmCreate( projname = 's50' )
+?siena07
+ans <- siena07( myalgorithm, data = mydata, effects = myeff)
+ans
+```
